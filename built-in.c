@@ -1,4 +1,4 @@
-#include "header.h"
+#include "shell.h"
 
 /* returns 0 if user command is a built-in, 1 otherwise */
 char handle_builtins(char *cmd, char *line __attribute__ ((unused)),
