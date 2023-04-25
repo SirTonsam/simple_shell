@@ -2,9 +2,8 @@
 
 /**
  * hsh - main shell loop
- * @info: the parameter & return info struct
+ * @info: the parameter and return information structure
  * @av: the argument vector from main()
- *
  * Return: 0 on success, 1 on error, or error code
  */
 int hsh(info_t *info, char **av)
@@ -145,7 +144,7 @@ void fork_cmd(info_t *info)
 				exit(126);
 			exit(1);
 		}
-		/* TODO: PUT ERROp FUNCTION */
+		/* TODO: PUT ERROR FUNCTION */
 	}
 	else
 	{
