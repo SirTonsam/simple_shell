@@ -30,8 +30,8 @@ typedef struct list_s
 /*define a structure to hold the built-in*/
 typedef struct built_in
 {
+	char *bi;
 	int (*f)();
-		char *bi;
 } builtin_t;
 /* prototypes for functions defines in shell_path.c */
 char *get_command_path(char *command, list_t **env_list);
