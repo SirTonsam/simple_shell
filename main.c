@@ -3,7 +3,8 @@
 /**
  * main - Entry point of the shell program
  *
- * This function is the main entry point of the shell program. It is responsible
+ * This function is the main entry point of the shell program.
+ *  It is responsible
  * for initializing variables, allocating memory, and calling the command line
  * loop function to execute the shell.
  *
@@ -13,7 +14,7 @@
 int main(void)
 {
 	char *input, *cmd;  /* pointers to character arrays for input and command */
-	list_t *env_list;   /* pointer to a linked list to hold environment variables */
+	list_t *env_list;   /* pointer to a linked list hold environment variables */
 	int status;         /* integer to store the status of the command line loop */
 
 	/* Allocate memory for the input buffer using malloc() */
