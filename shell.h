@@ -1,93 +1,250 @@
 #ifndef SHELL_H
 #define SHELL_H
-/*header*/
 
-#include <string.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <sys/stat.h>
+#include <stdio.h> /* for printf*/
+#include <unistd.h> /* for fork, execve*/
 #include <stdlib.h>
-#include <sys/wait.h>
-#include <stdint.h>
-#include <sys/types.h>
-#include <stdarg.h>
-/*defines constants*/
-#define PROMPT "$"
-#define BUFF_SIZE 1024
-/*error messages to display*/
-#define ENVIL "Invalid argument"
-#define WRONG "Something went wrong"
-#define ERROR "Error"
-#define ENOMEM "Out of memory"
-#define END "exit"
-/*define a structure for a singly linked list node*/
-typedef struct list_s
+#include <string.h> /* for strtok*/
+#include <stddef.h>
+#include <errno.h> /* for errno and perror */
+#include <sys/types.h> /* for type pid */
+#include <sys/wait.h> /* for wait */
+#include <sys/stat.h> /* for use of stat function */
+#include <signal.h> /* for signal management */
+#include <fcntl.h> /* for open files*/
+
+/************* MACROS **************/
+
+#include "macros.h" /* for msg help and prompt */
+
+/************* STRUCTURES **************/
+
+/**
+ * struct info- struct for the program's data
+ * @program_name: the name of the executable
+ * @input_line: pointer to the input read for _getline
+ * @command_name: pointer to the first command typed by the user
+ * @exec_counter: number of excecuted comands
+ * @file_descriptor: file descriptor to the input of commands
+ * @tokens: pointer to array of tokenized input
+ * @env: copy of the environ
+ * @alias_list: array of pointers with aliases.
+ */
+typedef struct info
 {
-	struct list_s *next;
-	unsigned int len;
-	char *str;
-} list_t;
-/*define a structure to hold the built-in*/
-typedef struct built_in
+char *program_name;
+char *input_line;
+char *command_name;
+int exec_counter;
+int file_descriptor;
+char **tokens;
+char **env;
+char **alias_list;
+} data_of_program;
+
+/**
+ * struct builtins - struct for the builtins
+ * @builtin: the name of the builtin
+ * @function: the associated function to be called for each builtin
+ */
+typedef struct builtins
 {
-	char *bi;
-	int (*f)();
-} builtin_t;
-/* prototypes for functions defines in shell_path.c */
-char *get_command_path(char *command, list_t **env_list);
-int execute_command(char **argv, list_t **env_list);
-char **get_path_dirs(list_t **env_list);
-/* prototypes for functions defines in unix_shell.c */
-char *_getenv(char *name, list_t **env_list);
-int _setenv(char *name, char *value, list_t **env_list);
-int _unsetenv(char *name, list_t **env_list);
-char *var_str(char *name, char *value);
-int delete_node(list_t **list, char *string);
-/* prototypes for functions defined in split_string.c */
-int count_words(char *str, char delim);
-char **strtow(char *str, char delim);
-int _wrdlen(char *s, char delim);
-/* prototypes for functions defines in strings_manipulation.c */
-char *_strdup(char *str);
-int _strncmp(char *s1, char *s2, int n);
-char *_strcpy(char *dest, char *src);
-int _strlen(char *str);
-char *_strcat(char *dest, char *src);
-/* prototypes for functions defines in convert_array.c */
-list_t *array_to_list(char **array);
-int arr_size(char **arr);
-void free_array(char **array);
-char **list_to_array(list_t **head);
-/* prototypes for functions defined in print_functions.c */
-void _strprint(char *str);
-size_t print_list(list_t *head);
-int _putchar(char c);
-void print_array(char **array);
-/*declare the environ variable as an external variable*/
-extern char **environ;
-/* prototypes for functions defines in shell_functions.c */
-int _getline(char *input, int size);
-void clear_buffer(char *buffer);
-char *mem_cpy(char *dest, char *src, int n);
-void *_realloc(void *ptr, unsigned int old_size, unsigned int new_size);
-int exit_shell(char **line_tok);
-/* prototypes for functions defines in shell_built-in.c */
-int unset_env(char **token, list_t **env_head);
-int exit_bi(char **token);
-int set_env(char **token, list_t **env_head);
-int built_ins(char **token, list_t **env_head);
-int print_env(char **token, list_t **env_head);
-/* prototypes or function defines in shell_executes.c */
-int cmd_line_loop(char *buffer, char *line, list_t **env_head);
-/* prototypes for functions defines in string_manipulation.c */
-int len_to_char(char *str, char c);
-char *_strchr(char *str, char c);
-int _strcmp(char *str1, char *str2);
-int _atoi(char *str);
-/* prototypes for functions defines in linked_list.c */
-list_t *add_node_end(list_t **head, char *str);
-void free_list(list_t *head);
-size_t list_length(list_t *head);
-list_t *add_node(list_t **head, char *str);
-list_t *get_node(list_t **head, char *str);
-#endif
+char *builtin;
+int (*function)(data_of_program *data);
+} builtins;
+
+
+/************* MAIN FUNCTIONS *************/
+
+
+/*========  shell.c  ========*/
+
+/* Initialize the struct with the info of the program */
+void initialize_data(data_of_program *data, int arc, char *argv[], char **env);
+
+/* Makes the infinite loop that shows the prompt*/
+void sisifo(char *prompt, data_of_program *data);
+
+/* Print the prompt in a new line */
+void handle_ctrl_c(int opr UNUSED);
+
+
+/*========  _getline.c  ========*/
+
+/* Read one line of the standar input*/
+int _getline(data_of_program *data);
+
+/* split the each line for the logical operators if it exist */
+int check_logic_ops(char *array_commands[], int i, char array_operators[]);
+
+
+/*======== expansions.c ========*/
+
+/* expand variables */
+void expand_variables(data_of_program *data);
+
+/* expand aliases */
+void expand_alias(data_of_program *data);
+
+/* append the string to the end of the buffer*/
+int buffer_add(char *buffer, char *str_to_add);
+
+
+/*======== str_tok.c ========*/
+
+/* Separate the string in tokens using a designed delimiter */
+void tokenize(data_of_program *data);
+
+/* Creates a pointer to a part of a string */
+char *_strtok(char *line, char *delim);
+
+
+/*======== execute.c ========*/
+
+/* Execute a command with its entire path */
+int execute(data_of_program *data);
+
+
+/*======== builtins_list.c ========*/
+
+/* If match a builtin, executes it */
+int builtins_list(data_of_program *data);
+
+
+/*======== find_in_path.c ========*/
+
+/* Creates an array of the path directories */
+char **tokenize_path(data_of_program *data);
+
+/* Search for program in path */
+int find_program(data_of_program *data);
+
+
+/************** HELPERS FOR MEMORY MANAGEMENT **************/
+
+
+/*======== helpers_free.c ========*/
+
+/* Frees the memory for directories */
+void free_array_of_pointers(char **directories);
+
+/* Free the fields needed each loop */
+void free_recurrent_data(data_of_program *data);
+
+/* Free all field of the data */
+void free_all_data(data_of_program *data);
+
+
+/************** BUILTINS **************/
+
+
+/*======== builtins_more.c ========*/
+
+/* Close the shell */
+int builtin_exit(data_of_program *data);
+
+/* Change the current directory */
+int builtin_cd(data_of_program *data);
+
+/* set the work directory */
+int set_work_directory(data_of_program *data, char *new_dir);
+
+/* show help information */
+int builtin_help(data_of_program *data);
+
+/* set, unset and show alias */
+int builtin_alias(data_of_program *data);
+
+
+/*======== builtins_env.c ========*/
+
+/* Shows the environment where the shell runs */
+int builtin_env(data_of_program *data);
+
+/* create or override a variable of environment */
+int builtin_set_env(data_of_program *data);
+
+/* delete a variable of environment */
+int builtin_unset_env(data_of_program *data);
+
+
+/************** HELPERS FOR ENVIRONMENT VARIABLES MANAGEMENT **************/
+
+
+/*======== env_management.c ========*/
+
+/* Gets the value of an environment variable */
+char *env_get_key(char *name, data_of_program *data);
+
+/* Overwrite the value of the environment variable */
+int env_set_key(char *key, char *value, data_of_program *data);
+
+/* Remove a key from the environment */
+int env_remove_key(char *key, data_of_program *data);
+
+/* prints the current environ */
+void print_environ(data_of_program *data);
+
+
+/************** HELPERS FOR PRINTING **************/
+
+
+/*======== helpers_print.c ========*/
+
+/* Prints a string in the standar output */
+int _print(char *string);
+
+/* Prints a string in the standar error */
+int _printe(char *string);
+
+/* Prints a string in the standar error */
+int _print_error(int errorcode, data_of_program *data);
+
+
+/************** HELPERS FOR STRINGS MANAGEMENT **************/
+
+
+/*======== helpers_string.c ========*/
+
+/* Counts the number of characters of a string */
+int str_length(char *string);
+
+/* Duplicates an string */
+char *str_duplicate(char *string);
+
+/* Compares two strings */
+int str_compare(char *string1, char *string2, int number);
+
+/* Concatenates two strings */
+char *str_concat(char *string1, char *string2);
+
+/* Reverse a string */
+void str_reverse(char *string);
+
+
+/*======== helpers_numbers.c ========*/
+
+/* Cast from int to string */
+void long_to_string(long number, char *string, int base);
+
+/* convert an string in to a number */
+int _atoi(char *s);
+
+/* count the coincidences of character in string */
+int count_characters(char *string, char *character);
+
+
+/*======== alias_management.c ========*/
+
+/* print the list of alias */
+int print_alias(data_of_program *data, char *alias);
+
+/* get the alias name */
+char *get_alias(data_of_program *data, char *alias);
+
+/* set the alias name */
+int set_alias(char *alias_string, data_of_program *data);
+
+
+#endif /* SHELL_H */
+
