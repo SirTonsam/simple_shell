@@ -18,7 +18,6 @@ ssize_t bytes_read, i = 0;
 
 /* check if doesnot exist more commands in the array */
 /* and checks the logical operators */
-
 if (!array_commands[0] || (array_operators[0] == '&' && errno != 0) ||
 (array_operators[0] == '|' && errno == 0))
 {
