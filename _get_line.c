@@ -1,4 +1,5 @@
 #include "shell.h"
+#include "macros.h"
 
 /**
 * _getline - read one line from the prompt.
