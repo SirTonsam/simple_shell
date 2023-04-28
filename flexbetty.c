@@ -10,7 +10,7 @@ include "shell.h"
  */
 void print_sum(int a, int b)
 {
-    int sum = a + b;
+	int sum = a + b;
 
-    printf("The sum of %d and %d is %d\n", a, b, sum);
+	printf("The sum of %d and %d is %d\n", a, b, sum);
 }
