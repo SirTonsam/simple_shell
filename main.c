@@ -1,31 +1,41 @@
-#include "shell.h"
+include "shell.h"
 
 /**
- * main - Entry point of the shell
- * Return: 0 on (success)
+ * main - implements a simple shell
+ *
+ * Return: EXIT_SUCCESS.
  */
-
 int main(void)
 {
-	char *input, *cmd;/*pointer to character arrays*/
-	list_t *env_list;/*pointer to a linked list*/
-	int status;/*integer to store the status of the command line loop*/
+	char *input;
+	char **args;
+	int status;
 
-	/*allocate memory for the input buffer using malloc ()*/
-	input = malloc(sizeof(char) * BUFF_SIZE);
+	/* Register signal handlers */
+	signal(SIGINT, handle_sigint);
+	signal(SIGQUIT, handle_sigquit);
+	signal(SIGTSTP, handle_sigstp);
 
-	/*check if memory was allocated successfully*/
-	if (input == NULL)
-		return (1);/*return an error code if memory allocation failed*/
-	cmd = NULL;/*set the pointer to NULL*/
-	/*convert the environment variables array into a linked list*/
-	env_list = array_to_list(environ);
-	/*call the command line loop function and store the return status*/
-	status = cmd_line_loop(input, cmd, &env_list);
+	do {
+		input = get_input();
+		if (!input || !*input)/* EOF detected, exit the loop */
+			break;
 
-	/*free the memory allocated for the linked list and input buffer*/
-	free_list(env_list);
-	free(input);
-	/*return the status of the command line loop to the calling function*/
-	return (status);
+		args = tokenize_input(input);
+		if (!args || !*args)
+		{
+			free(input);
+			free_tokens(args);
+			continue;
+		}
+		status = execute(args);
+		free(input);
+		free_tokens(args);
+
+		/* Set status to 1 to continue the loop */
+		status = 1;
+	} while (status);
+
+	return (EXIT_SUCCESS);
+
 }
