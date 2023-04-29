@@ -1,22 +1,30 @@
 #include "shell.h"
 
 /**
- * interactive - returns true if shell is interactive mode
- * @info: struct address
- *
- * Return: 1 if interactive mode, 0 otherwise
+ * interactive - Checks if the program is running in interactive mode,
+ *                i.e., whether it is connected to a terminal or not.
+ * 
+ * @info: Pointer to a structure containing information about the program
+ *        environment.
+ * 
+ * Return: 1 if running in interactive mode, 0 otherwise.
  */
+
 int interactive(info_t *info)
 {
 	return (isatty(STDIN_FILENO) && info->readfd <= 2);
 }
 
 /**
- * is_delim - checks if character is a delimeter
- * @c: the char to check
- * @delim: the delimeter string
- * Return: 1 if true, 0 if false
+ * is_delim - Checks if a given character is a delimiter by comparing it to
+ *            a string of delimiters.
+ * 
+ * @c: The character to be checked.
+ * @delim: The string of delimiter characters to compare against.
+ * 
+ * Return: 1 if the character is a delimiter, 0 otherwise.
  */
+
 int is_delim(char c, char *delim)
 {
 	while (*delim)

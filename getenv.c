@@ -1,11 +1,15 @@
 #include "shell.h"
 
 /**
- * get_environ - returns the string array copy of our environ
- * @info: Structure containing potential arguments. Used to maintain
- *          constant function prototype.
- * Return: Always 0
+ * get_environ - A function used to retrieve environment variables
+ *               for the program and return them as a character array.
+ * 
+ * @info: Pointer to a structure containing information about the program
+ *        environment.
+ * 
+ * Return: Pointer to the character array containing environment variables.
  */
+
 char **get_environ(info_t *info)
 {
 	if (!info->environ || info->env_changed)
@@ -50,14 +54,16 @@ int _unsetenv(info_t *info, char *var)
 }
 
 /**
- * _setenv - Initialize a new environment variable,
- *             or modify an existing one
- * @info: Structure containing potential arguments. Used to maintain
- *        constant function prototype.
- * @var: the string env var property
- * @value: the string env var value
- *  Return: Always 0
- */
+* _setenv - A function used to initialize a new environment variable
+* or modify an existing one.
+* @info: A structure containing potential arguments. This is used to maintain
+* a consistent function prototype.
+* @var: The name of the environment variable as a string.
+* @value: The value of the environment variable as a string.
+* 
+* Return: Always returns 0.
+*/
+
 int _setenv(info_t *info, char *var, char *value)
 {
 	char *buf = NULL;
