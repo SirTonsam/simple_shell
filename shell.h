@@ -13,6 +13,8 @@
 #include <errno.h>
 
 /* for read/write buffers */
+void *get_line(void)
+#define BUFFER_SIZE 1024 /* Or any other appropriate buffer size */
 #define READ_BUF_SIZE 1024
 #define WRITE_BUF_SIZE 1024
 #define BUF_FLUSH -1
@@ -74,6 +76,11 @@ typedef struct liststr
  */
 typedef struct passinfo
 {
+	static char buffer[BUFFER_SIZE]; /* Static buffer to store input*/
+	static int buf_pos, buf_size;    /*Position and size of buffer*/
+	char *input_str = NULL;          /*Pointer to input string*/
+	char current_char;               /*Current character being read*/
+	int input_len = 0;
 	char *arg;
 	char **argv;
 	char *path;
