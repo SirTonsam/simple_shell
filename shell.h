@@ -13,8 +13,6 @@
 #include <errno.h>
 
 /* for read/write buffers */
-/*void *get_line(void)*/
-#define BUFFER_SIZE 1024 /* Or any other appropriate buffer size */
 #define READ_BUF_SIZE 1024
 #define WRITE_BUF_SIZE 1024
 #define BUF_FLUSH -1
