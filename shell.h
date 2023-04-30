@@ -41,13 +41,13 @@ extern char **environ;
 
 /**
  * struct liststr - singly linked list
- * @nmbr: the number field
+ * @num: the number field
  * @str: a string
  * @next: points to the next node
  */
 typedef struct liststr
 {
-	int nmbr;
+	int num;
 	char *str;
 	struct liststr *next;
 } list_t;
@@ -135,7 +135,7 @@ int loophsh(char **);
 /* toem_errors.c */
 void _eputs(char *);
 int _eputchar(char);
-int _putfd(char m, int fd);
+int _putfd(char c, int fd);
 int _putsfd(char *str, int fd);
 
 /* toem_string.c */
@@ -221,14 +221,14 @@ int renumber_history(info_t *info);
 /* toem_lists.c */
 list_t *add_node(list_t **, const char *, int);
 list_t *add_node_end(list_t **, const char *, int);
-size_t prnt_list_strng(const list_t *);
+size_t print_list_str(const list_t *);
 int delete_node_at_index(list_t **, unsigned int);
 void free_list(list_t **);
 
 /* toem_lists1.c */
 size_t list_len(const list_t *);
 char **list_to_strings(list_t *);
-size_t prnt_list(const list_t *);
+size_t print_list(const list_t *);
 list_t *node_starts_with(list_t *, char *, char);
 ssize_t get_node_index(list_t *, list_t *);
 

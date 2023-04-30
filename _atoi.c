@@ -19,29 +19,29 @@ int interactive(info_t *info)
  * is_delim - Checks if a given character is a delimiter by comparing it to
  *            a string of delimiters.
  * 
- * @m: The character to be checked.
- * @delmtr: The string of delimiter characters to compare against.
+ * @c: The character to be checked.
+ * @delim: The string of delimiter characters to compare against.
  * 
  * Return: 1 if the character is a delimiter, 0 otherwise.
  */
 
-int is_delim(char m, char *delmtr)
+int is_delim(char c, char *delim)
 {
-	while (*delmtr)
-		if (*delmtr++ == m)
+	while (*delim)
+		if (*delim++ == c)
 			return (1);
 	return (0);
 }
 
 /**
  *_isalpha - checks for alphabetic character
- *@m: The character to input
- *Return: 1 if m is alphabetic, 0 otherwise
+ *@c: The character to input
+ *Return: 1 if c is alphabetic, 0 otherwise
  */
 
-int _isalpha(int m)
+int _isalpha(int c)
 {
-	if ((m >= 'a' && m <= 'z') || (m >= 'A' && m <= 'Z'))
+	if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))
 		return (1);
 	else
 		return (0);
